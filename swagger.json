@@ -6,22 +6,176 @@
   },
   "paths": {
     "/books": {
-      "get": { "summary": "Get all books", "responses": { "200": { "description": "OK" } } },
-      "post": { "summary": "Create book", "responses": { "201": { "description": "Created" } } }
+      "get": {
+        "summary": "Get all books",
+        "responses": {
+          "200": {
+            "description": "List of books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Book" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create book",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Book" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Book created" }
+        }
+      }
     },
     "/books/{id}": {
-      "get": { "summary": "Get book by ID", "responses": { "200": { "description": "OK" }, "404": { "description": "Not found" } } },
-      "put": { "summary": "Update book", "responses": { "200": { "description": "Updated" } } },
-      "delete": { "summary": "Delete book", "responses": { "200": { "description": "Deleted" } } }
+      "get": {
+        "summary": "Get book by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Book" }
+              }
+            }
+          },
+          "404": { "description": "Not found" }
+        }
+      },
+      "put": {
+        "summary": "Update book",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Book" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Book updated" }, "404": { "description": "Not found" } }
+      },
+      "delete": {
+        "summary": "Delete book",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Book deleted" }, "404": { "description": "Not found" } }
+      }
     },
     "/authors": {
-      "get": { "summary": "Get all authors", "responses": { "200": { "description": "OK" } } },
-      "post": { "summary": "Create author", "responses": { "201": { "description": "Created" } } }
+      "get": {
+        "summary": "Get all authors",
+        "responses": {
+          "200": {
+            "description": "List of authors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Author" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create author",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Author" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Author created" } }
+      }
     },
     "/authors/{id}": {
-      "get": { "summary": "Get author by ID", "responses": { "200": { "description": "OK" }, "404": { "description": "Not found" } } },
-      "put": { "summary": "Update author", "responses": { "200": { "description": "Updated" } } },
-      "delete": { "summary": "Delete author", "responses": { "200": { "description": "Deleted" } } }
+      "get": {
+        "summary": "Get author by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Author found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Author" }
+              }
+            }
+          },
+          "404": { "description": "Not found" }
+        }
+      },
+      "put": {
+        "summary": "Update author",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Author" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Author updated" }, "404": { "description": "Not found" } }
+      },
+      "delete": {
+        "summary": "Delete author",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Author deleted" }, "404": { "description": "Not found" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "author": { "type": "string" },
+          "isbn": { "type": "string" },
+          "publishedYear": { "type": "integer" },
+          "genre": { "type": "string" },
+          "language": { "type": "string" },
+          "pages": { "type": "integer" },
+          "publisher": { "type": "string" },
+          "available": { "type": "boolean" }
+        }
+      },
+      "Author": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "birthYear": { "type": "integer" },
+          "nationality": { "type": "string" },
+          "books": { "type": "array", "items": { "type": "string" } }
+        }
+      }
     }
   }
 }
