@@ -1,0 +1,27 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CSE341 Project API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/books": {
+      "get": { "summary": "Get all books", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Create book", "responses": { "201": { "description": "Created" } } }
+    },
+    "/books/{id}": {
+      "get": { "summary": "Get book by ID", "responses": { "200": { "description": "OK" }, "404": { "description": "Not found" } } },
+      "put": { "summary": "Update book", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete book", "responses": { "200": { "description": "Deleted" } } }
+    },
+    "/authors": {
+      "get": { "summary": "Get all authors", "responses": { "200": { "description": "OK" } } },
+      "post": { "summary": "Create author", "responses": { "201": { "description": "Created" } } }
+    },
+    "/authors/{id}": {
+      "get": { "summary": "Get author by ID", "responses": { "200": { "description": "OK" }, "404": { "description": "Not found" } } },
+      "put": { "summary": "Update author", "responses": { "200": { "description": "Updated" } } },
+      "delete": { "summary": "Delete author", "responses": { "200": { "description": "Deleted" } } }
+    }
+  }
+}
