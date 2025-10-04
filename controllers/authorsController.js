@@ -4,7 +4,8 @@ const Joi = require('joi');
 
 // Validation schema
 const authorSchema = Joi.object({
-  name: Joi.string().required(),
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
   birthYear: Joi.number().integer().optional(),
   nationality: Joi.string().optional()
 });
@@ -14,7 +15,7 @@ const getAllAuthors = async (req, res) => {
   try {
     const db = await connectDB();
     const authors = await db.collection('authors').find().toArray();
-    res.json(authors);
+    res.status(200).json(authors);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -24,11 +25,9 @@ const getAllAuthors = async (req, res) => {
 const getAuthorById = async (req, res) => {
   try {
     const db = await connectDB();
-    const author = await db
-      .collection('authors')
-      .findOne({ _id: new ObjectId(req.params.id) });
+    const author = await db.collection('authors').findOne({ _id: new ObjectId(req.params.id) });
     if (!author) return res.status(404).json({ error: "Author not found" });
-    res.json(author);
+    res.status(200).json(author);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,13 +35,13 @@ const getAuthorById = async (req, res) => {
 
 // CREATE author
 const createAuthor = async (req, res) => {
-  const { error } = authorSchema.validate(req.body);
+  const { error, value } = authorSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   try {
     const db = await connectDB();
-    const result = await db.collection('authors').insertOne(req.body);
-    res.status(201).json(result);
+    const result = await db.collection('authors').insertOne(value);
+    res.status(201).json({ insertedId: result.insertedId, ...value });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -50,17 +49,17 @@ const createAuthor = async (req, res) => {
 
 // UPDATE author
 const updateAuthor = async (req, res) => {
-  const { error } = authorSchema.validate(req.body);
+  const { error, value } = authorSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   try {
     const db = await connectDB();
     const result = await db.collection('authors').updateOne(
       { _id: new ObjectId(req.params.id) },
-      { $set: req.body }
+      { $set: value }
     );
     if (result.matchedCount === 0) return res.status(404).json({ error: "Author not found" });
-    res.json({ message: "Author updated" });
+    res.status(200).json({ message: "Author updated" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -72,7 +71,7 @@ const deleteAuthor = async (req, res) => {
     const db = await connectDB();
     const result = await db.collection('authors').deleteOne({ _id: new ObjectId(req.params.id) });
     if (result.deletedCount === 0) return res.status(404).json({ error: "Author not found" });
-    res.json({ message: "Author deleted" });
+    res.status(200).json({ message: "Author deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -5,6 +5,52 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/User" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User registered successfully" },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user and get JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/User" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
     "/books": {
       "get": {
         "summary": "Get all books",
@@ -24,6 +70,7 @@
       },
       "post": {
         "summary": "Create book",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -32,9 +79,7 @@
             }
           }
         },
-        "responses": {
-          "201": { "description": "Book created" }
-        }
+        "responses": { "201": { "description": "Book created" } }
       }
     },
     "/books/{id}": {
@@ -44,34 +89,25 @@
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
-          "200": {
-            "description": "Book found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Book" }
-              }
-            }
-          },
+          "200": { "description": "Book found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Book" } } } },
           "404": { "description": "Not found" }
         }
       },
       "put": {
         "summary": "Update book",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Book" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Book" } } }
         },
         "responses": { "200": { "description": "Book updated" }, "404": { "description": "Not found" } }
       },
       "delete": {
         "summary": "Delete book",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
@@ -97,12 +133,11 @@
       },
       "post": {
         "summary": "Create author",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Author" }
-            }
+            "application/json": { "schema": { "$ref": "#/components/schemas/Author" } }
           }
         },
         "responses": { "201": { "description": "Author created" } }
@@ -115,34 +150,25 @@
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
-          "200": {
-            "description": "Author found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Author" }
-              }
-            }
-          },
+          "200": { "description": "Author found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Author" } } } },
           "404": { "description": "Not found" }
         }
       },
       "put": {
         "summary": "Update author",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Author" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Author" } } }
         },
         "responses": { "200": { "description": "Author updated" }, "404": { "description": "Not found" } }
       },
       "delete": {
         "summary": "Delete author",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
@@ -151,7 +177,15 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
     "schemas": {
+      "User": {
+        "type": "object",
+        "properties": { "username": { "type": "string" }, "password": { "type": "string" } },
+        "required": ["username", "password"]
+      },
       "Book": {
         "type": "object",
         "properties": {
