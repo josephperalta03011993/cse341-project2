@@ -7,12 +7,15 @@ const register = async (req, res) => {
     const db = await connectDB();
     const users = db.collection("users");
 
+    console.log("Connect to the database");
+
     const { username, email, password } = req.body;
 
     const existing = await users.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Password hashed");
 
     await users.insertOne({
       username,
@@ -23,6 +26,7 @@ const register = async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
+    console.error("Register Error:", err);
     res.status(500).json({ error: err.message });
   }
 };
