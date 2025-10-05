@@ -7,7 +7,8 @@ const authorSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   birthYear: Joi.number().integer().optional(),
-  nationality: Joi.string().optional()
+  nationality: Joi.string().optional(), 
+  books: Joi.array().items(Joi.string()).optional()
 });
 
 // GET all authors
