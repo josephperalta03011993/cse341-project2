@@ -183,8 +183,26 @@
     "schemas": {
       "User": {
         "type": "object",
-        "properties": { "username": { "type": "string" }, "password": { "type": "string" } },
-        "required": ["username", "password"]
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "johndoe"
+          },
+          "email": {
+            "type": "string",
+            "example": "johndoe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "secret123"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-10-04T10:00:00Z"
+          }
+        },
+        "required": ["username", "email", "password"]
       },
       "Book": {
         "type": "object",

@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const booksRoutes = require('./routes/booksRoutes');
 const authorsRoutes = require('./routes/authorsRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -23,6 +24,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Routes
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
+app.use('/auth', authRoutes);
 
 app.use(require("express-session")({
   secret: process.env.SESSION_SECRET,
