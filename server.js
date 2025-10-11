@@ -43,8 +43,12 @@ app.get("/auth/github/callback",
 );
 
 app.get("/auth/logout", (req, res) => {
-  req.logout(() => {
-    res.json({ message: "Logged out" });
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid'); // Optional: clears session cookie
+      res.json({ message: "Logged out" });
+    });
   });
 });
 
