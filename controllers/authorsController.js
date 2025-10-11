@@ -1,17 +1,18 @@
 const connectDB = require('../db/connection');
 const { ObjectId } = require('mongodb');
 const Joi = require('joi');
+const ensureAuthenticated = require('../middleware/authMiddleware');
 
 // Validation schema
 const authorSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   birthYear: Joi.number().integer().optional(),
-  nationality: Joi.string().optional(), 
+  nationality: Joi.string().optional(),
   books: Joi.array().items(Joi.string()).optional()
 });
 
-// GET all authors
+// GET all authors (Public)
 const getAllAuthors = async (req, res) => {
   try {
     const db = await connectDB();
@@ -22,7 +23,7 @@ const getAllAuthors = async (req, res) => {
   }
 };
 
-// GET author by ID
+// GET author by ID (Public)
 const getAuthorById = async (req, res) => {
   try {
     const db = await connectDB();
@@ -34,48 +35,57 @@ const getAuthorById = async (req, res) => {
   }
 };
 
-// CREATE author
-const createAuthor = async (req, res) => {
-  const { error, value } = authorSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
+// CREATE author (Protected)
+const createAuthor = [
+  ensureAuthenticated,
+  async (req, res) => {
+    const { error, value } = authorSchema.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message });
 
-  try {
-    const db = await connectDB();
-    const result = await db.collection('authors').insertOne(value);
-    res.status(201).json({ insertedId: result.insertedId, ...value });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    try {
+      const db = await connectDB();
+      const result = await db.collection('authors').insertOne(value);
+      res.status(201).json({ insertedId: result.insertedId, ...value });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
-};
+];
 
-// UPDATE author
-const updateAuthor = async (req, res) => {
-  const { error, value } = authorSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
+// UPDATE author (Protected)
+const updateAuthor = [
+  ensureAuthenticated,
+  async (req, res) => {
+    const { error, value } = authorSchema.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message });
 
-  try {
-    const db = await connectDB();
-    const result = await db.collection('authors').updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: value }
-    );
-    if (result.matchedCount === 0) return res.status(404).json({ error: "Author not found" });
-    res.status(200).json({ message: "Author updated" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    try {
+      const db = await connectDB();
+      const result = await db.collection('authors').updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $set: value }
+      );
+      if (result.matchedCount === 0) return res.status(404).json({ error: "Author not found" });
+      res.status(200).json({ message: "Author updated" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
-};
+];
 
-// DELETE author
-const deleteAuthor = async (req, res) => {
-  try {
-    const db = await connectDB();
-    const result = await db.collection('authors').deleteOne({ _id: new ObjectId(req.params.id) });
-    if (result.deletedCount === 0) return res.status(404).json({ error: "Author not found" });
-    res.status(200).json({ message: "Author deleted" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+// DELETE author (Protected)
+const deleteAuthor = [
+  ensureAuthenticated,
+  async (req, res) => {
+    try {
+      const db = await connectDB();
+      const result = await db.collection('authors').deleteOne({ _id: new ObjectId(req.params.id) });
+      if (result.deletedCount === 0) return res.status(404).json({ error: "Author not found" });
+      res.status(200).json({ message: "Author deleted" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
-};
+];
 
 module.exports = { getAllAuthors, getAuthorById, createAuthor, updateAuthor, deleteAuthor };

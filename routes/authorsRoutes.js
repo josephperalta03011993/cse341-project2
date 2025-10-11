@@ -4,7 +4,7 @@ const authorsController = require('../controllers/authorsController');
 const auth = require('../middleware/authMiddleware');
 
 // CREATE
-router.post('/', auth, authorsController.createAuthor);
+router.post('/', authorsController.createAuthor);
 
 // READ all
 router.get('/', authorsController.getAllAuthors);
@@ -13,9 +13,9 @@ router.get('/', authorsController.getAllAuthors);
 router.get('/:id', authorsController.getAuthorById);
 
 // UPDATE
-router.put('/:id', auth, authorsController.updateAuthor);
+router.put('/:id', authorsController.updateAuthor);
 
 // DELETE
-router.delete('/:id', auth, authorsController.deleteAuthor);
+router.delete('/:id', authorsController.deleteAuthor);
 
 module.exports = router;
